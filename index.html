@@ -322,7 +322,7 @@ function buildUI() {
   KEYS.forEach((row) => row.forEach((k, c) => {
     const b = document.createElement("button");
     b.className = "key" + (c === 0 ? " dead" : k === "D" ? " estop" : k === "#" ? " special" : "");
-    if (k === "D") b.innerHTML = 'D<span class="sub">STOP</span>'; else b.textContent = k;
+    b.textContent = k;
     b.dataset.k = k;
     b.title = c === 0 ? "Column 1 = RB0 (INT0) - disabled" : k === "D" ? "D = EMERGENCY STOP" : k === "#" ? "Reset / main menu" : "";
     b.addEventListener("click", () => pressKey(k));

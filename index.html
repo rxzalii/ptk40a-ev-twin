@@ -61,14 +61,15 @@ main > section { min-height: 0; }
 .key:active, .key.down { transform: translateY(2px); box-shadow: 0 1px 0 #000; background: #3a3a3a; }
 .key.dead { background: #4b4b4b; color: #999; }
 .key.special { background: #0d47a1; }
-.key.estop { background: #b71c1c; }
+.key.estop { background: #c62828; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.key .sub { font-size: 9px; font-weight: 800; letter-spacing: .06em; margin-top: 3px; }
 .keynote { color: var(--silk); font-size: 11px; margin-top: 8px; opacity: .9; max-width: 240px; }
 
 .bb { background: #f4f1ea; border-radius: 8px; padding: 18px 12px; height: calc(100% - 26px);
-  display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; }
-.ctl { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
-.ctl-face { height: 104px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.ctl-name { font-size: 14px; font-weight: 700; color: #333; text-align: center; }
+  display: grid; grid-template-columns: 1fr; align-content: space-evenly; gap: 8px; }
+.ctl { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.ctl-face { height: 100px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.ctl-name { font-size: 13px; font-weight: 700; color: #333; text-align: center; }
 .bbitem { display: flex; gap: 16px; align-items: center; }
 .gridbtn { width: 88px; height: 88px; flex: none; border-radius: 50%; border: 6px solid #555;
   background: radial-gradient(circle at 40% 35%, #ff9b3d, #e65100); color: #fff; font-weight: 700;
@@ -91,10 +92,6 @@ main > section { min-height: 0; }
 .pwrbtn.on::before { left: 48px; }
 .pwrled { width: 14px; height: 14px; border-radius: 50%; background: #2a3a2a; border: 2px solid #111; }
 .pwrled.on { background: #4cff4c; box-shadow: 0 0 10px 3px rgba(76,255,76,.7); }
-.bigstop { width: 96px; height: 96px; flex: none; padding: 0; border-radius: 50%; border: 6px solid #f2c200; cursor: pointer;
-  background: radial-gradient(circle at 40% 35%, #ff5a5a, #b00000); color: #fff; font-weight: 800; font-size: 10.5px; letter-spacing: -.02em;
-  box-shadow: 0 4px 0 #6b0000; line-height: 1.15; }
-.bigstop:active, .bigstop.down { transform: translateY(3px); box-shadow: 0 1px 0 #6b0000; }
 .board.off button { cursor: not-allowed; }
 .bbtext b { display: block; }
 
@@ -155,7 +152,7 @@ kbd { background: #1c1c1c; color: #fff; border-radius: 4px; padding: 0 6px; font
       </div>
 
       <div class="mod">
-        <h3>Power, buttons and buzzer</h3>
+        <h3>Power, grid button and buzzer</h3>
         <div class="bb">
           <div class="ctl">
             <div class="ctl-face power"><button class="pwrbtn" id="power">OFF</button><div class="pwrled" id="pwrled"></div></div>
@@ -164,10 +161,6 @@ kbd { background: #1c1c1c; color: #fff; border-radius: 4px; padding: 0 6px; font
           <div class="ctl">
             <div class="ctl-face"><button class="gridbtn" id="gridbtn">GRID<br>PEAK</button></div>
             <div class="ctl-name">Grid Peak (RB0)</div>
-          </div>
-          <div class="ctl">
-            <div class="ctl-face"><button class="bigstop" id="estopbtn">EMERGENCY<br>STOP</button></div>
-            <div class="ctl-name">Emergency Stop</div>
           </div>
           <div class="ctl">
             <div class="ctl-face"><div class="buzz" id="buzz"><div class="body"></div></div></div>
@@ -329,18 +322,14 @@ function buildUI() {
   KEYS.forEach((row) => row.forEach((k, c) => {
     const b = document.createElement("button");
     b.className = "key" + (c === 0 ? " dead" : k === "D" ? " estop" : k === "#" ? " special" : "");
-    b.textContent = k; b.dataset.k = k;
-    b.title = c === 0 ? "Column 1 = RB0 (INT0) - disabled" : k === "D" ? "Emergency stop" : k === "#" ? "Reset / main menu" : "";
+    if (k === "D") b.innerHTML = 'D<span class="sub">STOP</span>'; else b.textContent = k;
+    b.dataset.k = k;
+    b.title = c === 0 ? "Column 1 = RB0 (INT0) - disabled" : k === "D" ? "D = EMERGENCY STOP" : k === "#" ? "Reset / main menu" : "";
     b.addEventListener("click", () => pressKey(k));
     kp.appendChild(b);
   }));
   $("gridbtn").addEventListener("click", pressGrid);
   $("power").addEventListener("click", () => setPower(!powered));
-  $("estopbtn").addEventListener("click", () => {
-    if (!powered) return;
-    pressKey("D");
-    $("estopbtn").classList.add("down"); setTimeout(() => $("estopbtn").classList.remove("down"), 180);
-  });
   document.addEventListener("keydown", e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     let k = e.key.length === 1 ? e.key.toUpperCase() : "";

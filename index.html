@@ -64,17 +64,20 @@ main > section { min-height: 0; }
 .key.estop { background: #b71c1c; }
 .keynote { color: var(--silk); font-size: 11px; margin-top: 8px; opacity: .9; max-width: 240px; }
 
-.bb { background: #f4f1ea; border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column;
-  gap: 14px; height: calc(100% - 26px); justify-content: center; }
+.bb { background: #f4f1ea; border-radius: 8px; padding: 18px 12px; height: calc(100% - 26px);
+  display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; }
+.ctl { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.ctl-face { height: 104px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.ctl-name { font-size: 14px; font-weight: 700; color: #333; text-align: center; }
 .bbitem { display: flex; gap: 16px; align-items: center; }
 .gridbtn { width: 88px; height: 88px; flex: none; border-radius: 50%; border: 6px solid #555;
   background: radial-gradient(circle at 40% 35%, #ff9b3d, #e65100); color: #fff; font-weight: 700;
   cursor: pointer; font-size: 13px; box-shadow: 0 4px 0 #333; }
 .gridbtn:active, .gridbtn.down { transform: translateY(3px); box-shadow: 0 1px 0 #333; }
 .buzz { display: flex; align-items: center; gap: 10px; }
-.buzz .body { width: 54px; height: 54px; border-radius: 50%; background: #111; position: relative;
+.buzz .body { width: 72px; height: 72px; border-radius: 50%; background: #111; position: relative;
   box-shadow: inset 0 0 0 6px #333; }
-.buzz .body::after { content: ""; position: absolute; inset: 21px; border-radius: 50%; background: #444; }
+.buzz .body::after { content: ""; position: absolute; inset: 28px; border-radius: 50%; background: #444; }
 .buzz.on .body { box-shadow: inset 0 0 0 6px #333, 0 0 0 6px rgba(255,193,7,.55), 0 0 0 14px rgba(255,193,7,.25); }
 .bbtext { font-size: 13px; color: #333; }
 .lcd-glass.off { background: #4b5216; box-shadow: inset 0 0 14px rgba(0,0,0,.6); }
@@ -155,21 +158,22 @@ kbd { background: #1c1c1c; color: #fff; border-radius: 4px; padding: 0 6px; font
       <div class="mod">
         <h3>Power, buttons and buzzer</h3>
         <div class="bb">
-          <div class="bbitem power">
-            <button class="pwrbtn" id="power">OFF</button>
-            <div class="pwrled" id="pwrled"></div>
-            <div class="bbtext"><b>PTK40A power switch</b><span id="pwrtxt">Kit is OFF. Switch it on.</span></div>
+          <div class="ctl">
+            <div class="ctl-face power"><button class="pwrbtn" id="power">OFF</button><div class="pwrled" id="pwrled"></div></div>
+            <div class="ctl-name">Power</div>
           </div>
-          <div class="bbitem">
-            <button class="gridbtn" id="gridbtn">GRID<br>PEAK</button>
-            <div class="bbtext"><b>Grid peak push button</b>Breadboard, RB0 to GND (INT0).<br>Each press turns PEAK mode on/off.</div>
+          <div class="ctl">
+            <div class="ctl-face"><button class="gridbtn" id="gridbtn">GRID<br>PEAK</button></div>
+            <div class="ctl-name">Grid Peak (RB0)</div>
           </div>
-          <div class="bbitem">
-            <button class="bigstop" id="estopbtn">EMERGENCY<br>STOP</button>
-            <div class="bbtext"><b>Emergency stop</b>Same as keypad D: stops charging,<br>LEDs off, long buzzer alarm. Press # to reset.</div>
+          <div class="ctl">
+            <div class="ctl-face"><button class="bigstop" id="estopbtn">EMERGENCY<br>STOP</button></div>
+            <div class="ctl-name">Emergency Stop</div>
           </div>
-          <div class="bbitem buzz" id="buzz"><div class="body"></div>
-            <div class="bbtext"><b>Buzzer (RC2)</b><span id="buzztxt">silent</span></div></div>
+          <div class="ctl">
+            <div class="ctl-face"><div class="buzz" id="buzz"><div class="body"></div></div></div>
+            <div class="ctl-name">Buzzer (RC2)</div>
+          </div>
         </div>
       </div>
     </div>
@@ -261,7 +265,6 @@ function setPower(on) {
   $("pwrled").classList.toggle("on", on);
   $("glass").classList.toggle("off", !on);
   $("board").classList.toggle("off", !on);
-  $("pwrtxt").textContent = on ? "Kit is ON (5 V)." : "Kit is OFF. Switch it on.";
   ensureAudio();
 }
 
@@ -279,7 +282,6 @@ function render() {
 
   const buzz = ex.twin_buzzer();
   $("buzz").classList.toggle("on", !!buzz);
-  $("buzztxt").textContent = buzz ? "BEEP!" : "silent";
   setBuzzerSound(!!buzz);
 
 

@@ -177,7 +177,6 @@ kbd { background: #1c1c1c; color: #fff; border-radius: 4px; padding: 0 6px; font
 
   <section class="side">
     <div class="card">
-      <h2>What is happening (plain words)</h2>
       <div class="bayrow"><div class="bayname">Bay A</div><div><div class="state" id="sa">Idle</div>
         <div class="bar"><div id="pa"></div></div><div class="diag" id="da"></div></div></div>
       <div class="bayrow"><div class="bayname">Bay B</div><div><div class="state" id="sb">Idle</div>
@@ -190,7 +189,6 @@ kbd { background: #1c1c1c; color: #fff; border-radius: 4px; padding: 0 6px; font
         <div><span>Energy delivered</span><br><b id="energy">0.00 kWh</b></div>
         <div><span>Sessions completed</span><br><b id="sessions">0</b></div>
       </div>
-      <p class="diag" style="margin:10px 0 0" id="int0"></p>
     </div>
 
     <div class="card grow">
@@ -300,8 +298,6 @@ function render() {
   $("maxload").textContent = ex.twin_station(3) + " kW";
   $("energy").textContent = (ex.twin_station(1) / 100).toFixed(2) + " kWh";
   $("sessions").textContent = ex.twin_station(0);
-  $("int0").textContent = `INT0 (RB0): ${ex.twin_gridstat(3)} real presses accepted, ` +
-    `${ex.twin_gridstat(1)} false triggers from keypad blocked, ${ex.twin_gridstat(2)} switch bounces ignored.`;
 
   const n = ex.twin_uart_len();
   if (n > 0) {
